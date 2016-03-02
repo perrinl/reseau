@@ -1,0 +1,14 @@
+##!/bin/bash
+
+iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+iptables -A FORWARD --in-interface eth1 -j ACCEPT
+iptables -A INPUT -p 47 -j ACCEPT
+iptables -A OUTPUT -p 47 -j ACCEPT
+iptables -t nat -A PREROUTING -p tcp --dport 1723 -j DNAT --to 192.168.10.3:1723
+
+modprobe ip_conntrack_pptp
+modprobe ip_nat_pptp
+echo 1 > /proc/sys/net/ipv4/ip_forward
+/etc/init.d/networking restart
+
+exit 0
